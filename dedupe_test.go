@@ -53,7 +53,7 @@ func TestDedupeStrings(t *testing.T) {
 	s := NewSet()
 	for _, tt := range tests {
 		s.AddWords(tt.input)
-		s.DedupeWords()
+		s.Dedupe2()
 		t.Run(tt.name, func(t *testing.T) {
 			result := s.Deduped()
 			t.Log("result", result)

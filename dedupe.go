@@ -1,8 +1,8 @@
 package dedupe
 
 import (
-	"fmt"
 	"slices"
+	"sort"
 	"strings"
 )
 
@@ -21,17 +21,13 @@ func NewSet() *Data {
 }
 
 func (d *Data) AddWords(words []string) {
-	d.words = append(d.words, words...)
+	for _, word := range words {
+		d.AddWord(word)
+	}
 }
 
 func (d *Data) AddWord(word string) {
-	d.words = append(d.words, word)
-	data := d.words[:0]
-	if !slices.ContainsFunc(data, func(e string) bool { return e == word }) {
-		d.Count[word] += 1
-		data = append(data, word)
-	}
-	fmt.Println("data", data)
+	d.words = append(d.words, strings.ToLower(word))
 }
 
 func (d *Data) Deduped() []string {
@@ -42,38 +38,47 @@ func (d *Data) Deduped() []string {
 // 	d.words = slices.ContainsFunc(d.words, word...)
 // }
 
-func (d *Data) DedupeWords() {
-	// for _, word := range d.words {
-	// 	d.Dedupe1(word)
-	// }
-	d.Dedupe2(d.words)
-}
+// func (d *Data) DedupeWords() {
+// 	// for _, word := range d.words {
+// 	// 	d.Dedupe1(word)
+// 	// }
+// 	d.Dedupe2()
+// }
 
-func (d *Data) Dedupe1(word string) {
+func (d *Data) Dedupe1() {
 	data := d.words[:0]
-	if !slices.ContainsFunc(d.words, func(e string) bool { return e == word }) {
-		d.Count[word] += 1
-		data = append(data, word)
+	for _, word := range d.words {
+		if !slices.ContainsFunc(d.words, func(e string) bool { return e == word }) {
+			d.Count[word] += 1
+			data = append(data, word)
+		}
 	}
 
 	d.WordsDeduped = data
 }
 
+// func (d *Data) Sort() {
+// 	// slices.Sort(d.words)
+// 	sort.Slice(d.words, func(i, j string) bool {
+// 		return a[i] < a[j]
+// 	})
+// }
+
 // Dedupe - dedupe array of strings
-func (d *Data) Dedupe2(words []string) {
-	//  dedupe????
+func (d *Data) Dedupe2() {
 	set := make(map[string]interface{})
 	var res []string
+	sort.Slice(d.words, func(i, j int) bool { return d.words[i] > d.words[j] })
+	// sort.Sort(sort.Reverse(sort.StringSlice{}d.words))
 
-	for _, s := range words {
-		strs := strings.Split(s, " ")
-		for _, sub := range strs {
-			st := strings.ToLower(sub)
-			if _, ok := set[st]; !ok {
-				set[st] = nil
-				res = append(res, st)
-			}
+	for _, sub := range d.words {
+		// strs := strings.Split(s, " ")
+		// for _, sub := range s {
+		if _, ok := set[sub]; !ok {
+			set[sub] = nil
+			res = append(res, sub)
 		}
+		// }
 	}
 
 	d.WordsDeduped = res

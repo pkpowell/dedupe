@@ -8,7 +8,7 @@ import (
 
 type Data struct {
 	Name         string
-	Words        []string
+	words        []string
 	WordsDeduped []string
 
 	Count map[string]int
@@ -21,12 +21,12 @@ func NewSet() *Data {
 }
 
 func (d *Data) AddWords(words []string) {
-	d.Words = append(d.Words, words...)
+	d.words = append(d.words, words...)
 }
 
 func (d *Data) AddWord(word string) {
-	d.Words = append(d.Words, word)
-	data := d.Words[:0]
+	d.words = append(d.words, word)
+	data := d.words[:0]
 	if !slices.ContainsFunc(data, func(e string) bool { return e == word }) {
 		d.Count[word] += 1
 		data = append(data, word)
@@ -38,19 +38,20 @@ func (d *Data) Deduped() []string {
 	return d.WordsDeduped
 }
 
-func (d *Data) Contains(word []string) {
-	d.Words = append(d.Words, word...)
-}
+// func (d *Data) Contains(word []string) {
+// 	d.words = slices.ContainsFunc(d.words, word...)
+// }
 
 func (d *Data) DedupeWords() {
-	for _, word := range d.Words {
-		d.Dedupe1(word)
-	}
+	// for _, word := range d.words {
+	// 	d.Dedupe1(word)
+	// }
+	d.Dedupe2(d.words)
 }
 
 func (d *Data) Dedupe1(word string) {
-	data := d.Words[:0]
-	if !slices.ContainsFunc(d.Words, func(e string) bool { return e == word }) {
+	data := d.words[:0]
+	if !slices.ContainsFunc(d.words, func(e string) bool { return e == word }) {
 		d.Count[word] += 1
 		data = append(data, word)
 	}
@@ -59,7 +60,7 @@ func (d *Data) Dedupe1(word string) {
 }
 
 // Dedupe - dedupe array of strings
-func (d *Data) Dedupe2(words []string) string {
+func (d *Data) Dedupe2(words []string) {
 	//  dedupe????
 	set := make(map[string]interface{})
 	var res []string
@@ -75,5 +76,5 @@ func (d *Data) Dedupe2(words []string) string {
 		}
 	}
 
-	return strings.Join(res, " ")
+	d.WordsDeduped = res
 }

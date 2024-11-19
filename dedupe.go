@@ -3,6 +3,7 @@ package dedupe
 import (
 	"fmt"
 	"slices"
+	"strings"
 )
 
 type Data struct {
@@ -41,13 +42,38 @@ func (d *Data) Contains(word []string) {
 	d.Words = append(d.Words, word...)
 }
 
-func (d *Data) Dedupe(words []string) {
+func (d *Data) DedupeWords() {
+	for _, word := range d.Words {
+		d.Dedupe1(word)
+	}
+}
+
+func (d *Data) Dedupe1(word string) {
 	data := d.Words[:0]
-	for _, word := range words {
-		if !slices.ContainsFunc(data, func(e string) bool { return e == word }) {
-			d.Count[word] += 1
-			data = append(data, word)
+	if !slices.ContainsFunc(d.Words, func(e string) bool { return e == word }) {
+		d.Count[word] += 1
+		data = append(data, word)
+	}
+
+	d.WordsDeduped = data
+}
+
+// Dedupe - dedupe array of strings
+func (d *Data) Dedupe2(words []string) string {
+	//  dedupe????
+	set := make(map[string]interface{})
+	var res []string
+
+	for _, s := range words {
+		strs := strings.Split(s, " ")
+		for _, sub := range strs {
+			st := strings.ToLower(sub)
+			if _, ok := set[st]; !ok {
+				set[st] = nil
+				res = append(res, st)
+			}
 		}
 	}
-	d.WordsDeduped = data
+
+	return strings.Join(res, " ")
 }

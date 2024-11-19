@@ -6,6 +6,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// func BenchmarkDedupe(b *testing.B) {
+// 	words := []string{"abc", "bcd", "abcde", "cdefg", "bg"}
+// 	for range b.N {
+
+// 	}
+// }
+
 func TestDedupeStrings(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -46,8 +53,10 @@ func TestDedupeStrings(t *testing.T) {
 	s := NewSet()
 	for _, tt := range tests {
 		s.AddWords(tt.input)
+		s.DedupeWords()
 		t.Run(tt.name, func(t *testing.T) {
 			result := s.Deduped()
+			t.Log("result", result)
 			assert.ElementsMatch(t, tt.expected, result)
 		})
 	}

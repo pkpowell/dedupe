@@ -124,13 +124,20 @@ func (d *Data) Dedupe2() {
 		// }
 		_, ok := set[word]
 		if !ok {
+			substring := false
 			for k := range set {
 				fmt.Println("checking k", k)
 				if !strings.Contains(k, word) {
 					fmt.Println("new word", word, k)
 					set[word] = struct{}{}
 					res = append(res, word)
+				} else {
+					substring = true
 				}
+			}
+			if !substring {
+				set[word] = struct{}{}
+				res = append(res, word)
 			}
 		}
 
